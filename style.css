@@ -8,14 +8,12 @@
 }
 
 body {
-    font-family: "Nunito", sans-serif;
     font-weight: 400;
     margin: 0;
     background: var(--grey);
 }
 
 header {
-    font-family: "Calligraffitti", serif;
     background: var(--primary);
     color: var(--background);
     padding: 1rem;
@@ -66,8 +64,4 @@ main#content {
     flex: 1;
     padding: 2rem;
     background: var(--background);
-}
-
-main#content h1, h2, h3 {
-    font-family: "Kite One", sans-serif;
 }
