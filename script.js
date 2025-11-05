@@ -5,15 +5,30 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentMarkdown = ""; // merken, was geladen ist
 
   // Markdown-Dateien laden
-  links.forEach(link => {
+    links.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
       const file = link.getAttribute("data-file");
-      fetch(`/docs/${file}`)
-        .then(res => res.text())
+      if (!file) {
+        console.error("Link hat kein data-file Attribut:", link);
+        return;
+      }
+
+      // relative URL statt absoluter Root-URL
+      const url = new URL(`docs/${file}`, window.location.href).href;
+
+      fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error(`Fehler beim Laden ${url} (Status ${res.status})`);
+          return res.text();
+        })
         .then(md => {
           currentMarkdown = md;
           renderMarkdown(md);
+        })
+        .catch(err => {
+          console.error(err);
+          content.innerHTML = "<p>Fehler beim Laden der Markdown-Datei. Siehe Konsole.</p>";
         });
     });
   });
