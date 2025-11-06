@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   const links = document.querySelectorAll("nav#sidebar a");
   const content = document.getElementById("content");
+  const tocList = document.getElementById("toc-list");
   const searchInput = document.getElementById("search");
   let currentMarkdown = ""; // merken, was geladen ist
 
@@ -35,6 +36,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function renderMarkdown(md) {
     content.innerHTML = marked.parse(md);
+    buildTOC()
+  }
+
+  // Inhaltsverzeichnis (TOC) aufbauen
+  function buildTOC() {
+    tocList.innerHTML = "";
+    const headings = content.querySelectorAll("h1, h2, h3");
+    headings.forEach((h, index) => {
+      const id = `heading-${index}`;
+      h.id = id;
+
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.textContent = h.textContent;
+      a.href = `#${id}`;
+      a.style.marginLeft = h.tagName === "H2" ? "0.5em" :
+                           h.tagName === "H3" ? "1em" : "0";
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
   }
 
   // Suche: filtert Navigation + markiert Überschriften
