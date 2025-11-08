@@ -3,37 +3,78 @@ document.addEventListener("DOMContentLoaded", () => {
   const content = document.getElementById("content");
   const tocList = document.getElementById("toc-list");
   const searchInput = document.getElementById("search");
+  const sidebar = document.getElementById("sidebar");
+  const toc = document.getElementById("toc");
+  const menuBtn = document.getElementById("menu-btn");
+  const tocBtn = document.getElementById("toc-btn");
   let currentMarkdown = ""; // merken, was geladen ist
 
-  // Markdown-Dateien laden
-    links.forEach(link => {
+  // --- Mobile Sidebar Buttons ---
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("open");
+    toc.classList.remove("open");
+  });
+
+  tocBtn.addEventListener("click", () => {
+    toc.classList.toggle("open");
+    sidebar.classList.remove("open");
+  });
+
+  // Klick außerhalb schließt Menüs
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest("#sidebar, #menu-btn")) {
+      sidebar.classList.remove("open");
+    }
+    if (!e.target.closest("#toc, #toc-btn")) {
+      toc.classList.remove("open");
+    }
+  });
+
+  // // Markdown-Dateien laden
+  //   links.forEach(link => {
+  //   link.addEventListener("click", e => {
+  //     e.preventDefault();
+  //     const file = link.getAttribute("data-file");
+  //     if (!file) {
+  //       console.error("Link hat kein data-file Attribut:", link);
+  //       return;
+  //     }
+
+  //     // relative URL statt absoluter Root-URL
+  //     const url = new URL(`docs/${file}`, window.location.href).href;
+
+  //     fetch(url)
+  //       .then(res => {
+  //         if (!res.ok) throw new Error(`Fehler beim Laden ${url} (Status ${res.status})`);
+  //         return res.text();
+  //       })
+  //       .then(md => {
+  //         currentMarkdown = md;
+  //         renderMarkdown(md);
+  //       })
+  //       .catch(err => {
+  //         console.error(err);
+  //         content.innerHTML = "<p>Fehler beim Laden der Markdown-Datei. Siehe Konsole.</p>";
+  //       });
+  //   });
+  // });
+
+  // --- Markdown-Datei laden ---
+  links.forEach(link => {
     link.addEventListener("click", e => {
       e.preventDefault();
       const file = link.getAttribute("data-file");
-      if (!file) {
-        console.error("Link hat kein data-file Attribut:", link);
-        return;
-      }
-
-      // relative URL statt absoluter Root-URL
-      const url = new URL(`docs/${file}`, window.location.href).href;
-
-      fetch(url)
-        .then(res => {
-          if (!res.ok) throw new Error(`Fehler beim Laden ${url} (Status ${res.status})`);
-          return res.text();
-        })
+      fetch(`docs/${file}`)
+        .then(res => res.text())
         .then(md => {
           currentMarkdown = md;
           renderMarkdown(md);
-        })
-        .catch(err => {
-          console.error(err);
-          content.innerHTML = "<p>Fehler beim Laden der Markdown-Datei. Siehe Konsole.</p>";
+          sidebar.classList.remove("open");
         });
     });
   });
 
+  // --- Markdown rendern + Inhaltsverzeichnis erstellen ---
   function renderMarkdown(md) {
     content.innerHTML = marked.parse(md);
     buildTOC()

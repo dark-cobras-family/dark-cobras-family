@@ -16,8 +16,12 @@
 
 <body>
     <header>
-        <h1>Dark Cobras Family Dressurlexikon</h1>
+        <div class="header-left">
+            <button id="menu-btn" class="mobile-btn">☰</button>
+            <h1>Dark Cobras Family Dressurlexikon</h1>
+        </div>
         <input type="text" id="search" placeholder="Suche..." />
+        <button id="toc-btn" class="mobile-btn">☰ Inhalt</button>
     </header>
 
     <div class="container">
@@ -43,7 +47,6 @@
         </main>
 
         <aside id="toc">
-            <h3>Auf dieser Seite</h3>
             <ul id="toc-list"></ul>
         </aside>
     </div>
