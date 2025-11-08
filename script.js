@@ -1,5 +1,30 @@
+const docsIndex = {}; // speichert: { dateiname: [{heading, level}] }
 document.addEventListener("DOMContentLoaded", () => {
   const links = document.querySelectorAll("nav#sidebar a");
+  // --- Alle Markdown-Dateien vorab scannen und Index erstellen ---
+    links.forEach(link => {
+      const file = link.getAttribute("data-file");
+      if (file) {
+        fetch(`docs/${file}`)
+          .then(res => res.text())
+          .then(md => {
+            const html = marked.parse(md);
+            const tmp = document.createElement("div");
+            tmp.innerHTML = html;
+
+            const h1 = tmp.querySelector("h1")?.textContent || file.replace(".md", "");
+            const headings = [...tmp.querySelectorAll("h2, h3, h4, h5, h6")].map(h => ({
+              text: h.textContent,
+              parent: h1,
+              level: h.tagName,
+              file
+            }));
+
+            docsIndex[file] = headings;
+          });
+      }
+    });
+
   const content = document.getElementById("content");
   const tocList = document.getElementById("toc-list");
   const searchInput = document.getElementById("search");
@@ -41,35 +66,6 @@ fetch(`docs/${defaultFile}`)
       toc.classList.remove("open");
     }
   });
-
-  // // Markdown-Dateien laden
-  //   links.forEach(link => {
-  //   link.addEventListener("click", e => {
-  //     e.preventDefault();
-  //     const file = link.getAttribute("data-file");
-  //     if (!file) {
-  //       console.error("Link hat kein data-file Attribut:", link);
-  //       return;
-  //     }
-
-  //     // relative URL statt absoluter Root-URL
-  //     const url = new URL(`docs/${file}`, window.location.href).href;
-
-  //     fetch(url)
-  //       .then(res => {
-  //         if (!res.ok) throw new Error(`Fehler beim Laden ${url} (Status ${res.status})`);
-  //         return res.text();
-  //       })
-  //       .then(md => {
-  //         currentMarkdown = md;
-  //         renderMarkdown(md);
-  //       })
-  //       .catch(err => {
-  //         console.error(err);
-  //         content.innerHTML = "<p>Fehler beim Laden der Markdown-Datei. Siehe Konsole.</p>";
-  //       });
-  //   });
-  // });
 
   // --- Markdown-Datei laden ---
   links.forEach(link => {
@@ -115,33 +111,51 @@ fetch(`docs/${defaultFile}`)
   searchInput.addEventListener("input", () => {
     const query = searchInput.value.toLowerCase();
 
-    // Navigation filtern
-    const items = document.querySelectorAll("nav#sidebar li");
-    items.forEach(item => {
-      const text = item.textContent.toLowerCase();
-      item.style.display = text.includes(query) ? "" : "none";
-    });
+    // --- Neue globale Überschriften-Suche ---
+    const resultsContainer = document.getElementById("toc-list");
+    resultsContainer.innerHTML = "";
 
-    // Überschriften im Content hervorheben
-    if (currentMarkdown) {
-      renderMarkdown(currentMarkdown); // reset Highlighting
-      if (query.trim() !== "") {
-        highlightHeadings(query);
+    if (query.trim() === "") {
+      buildTOC(); // wenn leer, normales Inhaltsverzeichnis
+      return;
+    }
+
+    // Alle Überschriften aus allen Docs durchsuchen
+    const matches = [];
+    for (const [file, headings] of Object.entries(docsIndex)) {
+      for (const h of headings) {
+        if (h.text.toLowerCase().includes(query)) {
+          matches.push({ ...h, file });
+        }
       }
     }
-  });
 
-  function highlightHeadings(query) {
-    const headings = content.querySelectorAll("h1,h2,h3,h4,h5,h6");
-    headings.forEach(h => {
-      const text = h.textContent;
-      if (text.toLowerCase().includes(query)) {
-        // Überschrift hervorheben
-        h.style.backgroundColor = "yellow";
-        h.scrollIntoView({ behavior: "smooth", block: "center" });
-      } else {
-        h.style.backgroundColor = "";
-      }
-    });
-  }
+    // Ergebnisse anzeigen (in rechter TOC-Leiste)
+    if (matches.length > 0) {
+      matches.forEach(m => {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.textContent = `${m.text} (${m.parent})`;
+        a.href = "#";
+        a.addEventListener("click", e => {
+          e.preventDefault();
+          searchInput.value = ""; // Suchfeld leeren
+          fetch(`docs/${m.file}`)
+            .then(res => res.text())
+            .then(md => {
+              currentMarkdown = md;
+              renderMarkdown(md);
+              setTimeout(() => {
+                const target = [...content.querySelectorAll("h1,h2,h3")].find(h => h.textContent === m.text);
+                if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+              }, 200);
+            });
+        });
+        li.appendChild(a);
+        resultsContainer.appendChild(li);
+      });
+    } else {
+      resultsContainer.innerHTML = "<li><em>Keine Treffer gefunden</em></li>";
+    }
+  });
 });
