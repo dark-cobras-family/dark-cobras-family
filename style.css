@@ -11,6 +11,7 @@ body {
     font-weight: 400;
     margin: 0;
     background: var(--grey);
+    overflow: hidden;
 }
 
 header {
@@ -33,13 +34,23 @@ header h1 {
 }
 
 .container {
-    display: flex;
+    display: grid;
+    grid-template-columns: 220px 1fr 220px;
+    height: calc(100vh - 70px);
+}
+nav#sidebar {
+    background: var(--secondary);
 }
 
-nav#sidebar {
-    width: 220px;
-    background: var(--secondary);
+/* Seitenleisten (sticky) */
+nav#sidebar,
+aside#toc {
     padding: 1rem;
+    overflow-y: auto;
+    position: sticky;
+    top: 70px;
+    height: calc(100vh - 70px);
+    box-sizing: border-box;
 }
 
 nav#sidebar ul {
@@ -61,16 +72,14 @@ nav#sidebar a:hover {
 }
 
 main#content {
-    flex: 1;
     padding: 2rem;
     background: var(--background);
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
 aside#toc {
-    background: #f9f9f9;
-    padding: 1rem;
-    border-left: 1px solid #ddd;
-    overflow-y: auto;
+    background: var(--background)
 }
 
 #toc h3 {
@@ -90,10 +99,10 @@ aside#toc {
 }
 
 #toc-list a {
-    color: #007acc;
     text-decoration: none;
+    color: var(--primary);
 }
 
 #toc-list a:hover {
-    text-decoration: underline;
+    color: var(--accent);
 }
