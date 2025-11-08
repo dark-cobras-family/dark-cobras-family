@@ -20,13 +20,14 @@
             <button id="menu-btn" class="mobile-btn">☰</button>
             <h1>Dark Cobras Family Dressurlexikon</h1>
         </div>
-        <input type="text" id="search" placeholder="Suche..." />
         <button id="toc-btn" class="mobile-btn">☰ Inhalt</button>
     </header>
-
+    
     <div class="container">
         <nav id="sidebar">
+            <input type="text" id="search" placeholder="Suche..." />
             <ul>
+                <li><a href="#" data-file="home.md">Home</a></li>
                 <li><a href="#" data-file="base.md">Base</a></li>
                 <li><a href="#" data-file="arena.md">Die Arena</a></li>
                 <li><a href="#" data-file="gaps-alignment.md">Gaps und Alignment</a></li>
@@ -41,15 +42,15 @@
             </ul>
         </nav>
 
-        <main id="content">
-            <h2>💚 Willkommen!</h2>
-            <p>Wähle links ein Thema aus, um die Inhalte zu sehen.</p>
-        </main>
-
+        <main id="content"></main>
         <aside id="toc">
             <ul id="toc-list"></ul>
         </aside>
     </div>
+
+    <footer>
+        © 2025 Dark Cobras Family. Alle Rechte vorbehalten.
+    </footer>
 
     <script src="script.js"></script>
 </body>

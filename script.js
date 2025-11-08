@@ -9,6 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const tocBtn = document.getElementById("toc-btn");
   let currentMarkdown = ""; // merken, was geladen ist
 
+  // Standard-Seite beim ersten Laden
+const defaultFile = "home.md";
+fetch(`docs/${defaultFile}`)
+  .then(res => res.text())
+  .then(md => {
+    currentMarkdown = md;
+    renderMarkdown(md);
+  })
+  .catch(err => {
+    console.warn("Konnte home.md nicht laden:", err);
+  });
+
   // --- Mobile Sidebar Buttons ---
   menuBtn.addEventListener("click", () => {
     sidebar.classList.toggle("open");
@@ -83,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // Inhaltsverzeichnis (TOC) aufbauen
   function buildTOC() {
     tocList.innerHTML = "";
-    const headings = content.querySelectorAll("h1, h2, h3");
+    const headings = content.querySelectorAll("h2, h3");
     headings.forEach((h, index) => {
       const id = `heading-${index}`;
       h.id = id;
