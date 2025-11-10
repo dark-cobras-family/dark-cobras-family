@@ -8,7 +8,6 @@
 
     <!-- style sheets -->
     <link rel="stylesheet" href="style.css">
-    <!-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Calligraffitti|Kite One|Nunito"> -->
 
     <!-- mardown renderer -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -34,7 +33,6 @@
     
     <div class="container">
         <nav id="sidebar">
-            <input type="text" id="search" placeholder="Suche..." />
             <ul>
                 <li><a href="#" data-file="home.md">Home</a></li>
                 <li><a href="#" data-file="base.md">Base</a></li>
@@ -50,9 +48,10 @@
                 <li><a href="#" data-file="custom.md">Custom</a></li>
             </ul>
         </nav>
-
+        
         <main id="content"></main>
         <aside id="toc">
+            <input type="text" id="search" placeholder="Suche..." />
             <ul id="toc-list"></ul>
         </aside>
     </div>
