@@ -46,7 +46,7 @@ header h1#mobile {
     cursor: pointer;
 }
 
-#toc #search {
+#toc input#search {
     width: 100%;
     box-sizing: border-box;
     padding: 0.5rem;
